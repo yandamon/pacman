@@ -25,6 +25,7 @@ const getDirectionByNumber = (number) => {
 	}
 };
 
+
 const getNumberByDirection = (direction) => {
 	switch (direction) {
 		case 'NORTH':
@@ -121,7 +122,22 @@ class PacmanSimulator extends React.Component{
 		this.setState({
       result:true
     })
-	}
+  }
+  
+  plcaePacman = (value) =>{
+    const xPosition = value[1].split(",")[0];
+    const yPosition = value[1].split(",")[1];
+    const direction = value[1].split(",")[2];
+    const number = getNumberByDirection(direction);
+    if(xPosition.match(/[0-4]\d*$/) && yPosition.match(/[0-4]\d*$/) && number !== 0){
+      this.place(xPosition,yPosition,direction)
+      }else
+    {
+      this.setState({
+        errorMessage: 'Invalid place, it must be  NUMBER between 0 - 4 and a direction'
+      })
+    }
+  }
 
 
   onSubmit =(e) => {
@@ -133,18 +149,7 @@ class PacmanSimulator extends React.Component{
     })
     const value = this.state.inputValue.split(" ");
     if(value[0]==='PLACE' && value.length === 2){
-      const xPosition = value[1].split(",")[0];
-      const yPosition = value[1].split(",")[1];
-      const direction = value[1].split(",")[2];
-      const number = getNumberByDirection(direction);
-      if(xPosition.match(/[0-4]\d*$/) && yPosition.match(/[0-4]\d*$/) && number !== 0){
-        this.place(xPosition,yPosition,direction)
-        }else
-      {
-        this.setState({
-          errorMessage: 'Invalid place, it must be  NUMBER between 0 - 4 and a direction'
-        })
-      }
+      this.plcaePacman(value)
     }
     else if(!this.state.direction){
       this.setState({

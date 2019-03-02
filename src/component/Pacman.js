@@ -25,6 +25,7 @@ const PacmanWrapper = styled.div`
     border-bottom: ${props=>mapDirection[props.directionValue] === 'bottom' ? '10px solid red' : '0'};
     top: ${props => (props.gridNumber - 1 - props.yPosition || 0) * 100 + offSet}px;
     left:${props => (props.xPosition || 0) * 100 + offSet}px;
+    box-sizing:border-box
 `
 
 export default (props) => {

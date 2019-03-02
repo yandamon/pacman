@@ -142,7 +142,7 @@ class PacmanSimulator extends React.Component{
         }else
       {
         this.setState({
-          errorMessage: 'Invalid place, it must be a NUMBER between 0 and 4'
+          errorMessage: 'Invalid place, it must be a NUMBER between 0 - 4 and a direction'
         })
       }
     }

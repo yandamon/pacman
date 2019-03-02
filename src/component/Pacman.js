@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
+
 const mapDirection = {
-    WEST:'left',
-    NORTH:'top',
-    EAST:'right',
-    SOUTH:'bottom'
-}
+	NORTH: 'top',
+	EAST: 'right',
+	WEST: 'left',
+	SOUTH: 'bottom',
+};
 
 const offSet = 25;
 

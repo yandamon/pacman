@@ -129,12 +129,14 @@ class PacmanSimulator extends React.Component{
     const yPosition = value[1].split(",")[1];
     const direction = value[1].split(",")[2];
     const number = getNumberByDirection(direction);
-    if(xPosition.match(/[0-4]\d*$/) && yPosition.match(/[0-4]\d*$/) && number !== 0){
+    if(xPosition >=0 && xPosition <=4 &&  xPosition%1 === 0 &&
+       yPosition >=0 && yPosition <=4 &&  yPosition%1 === 0 &&
+       number !== 0){
       this.place(xPosition,yPosition,direction)
       }else
     {
       this.setState({
-        errorMessage: 'Invalid place, it must be  NUMBER between 0 - 4 and a direction'
+        errorMessage: 'Invalid place, it must be NUMBER between 0 - 4 and a direction'
       })
     }
   }

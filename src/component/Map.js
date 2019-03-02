@@ -3,8 +3,8 @@ import Grid from './Grid';
 import styled from 'styled-components';
 
 const MapWrapper = styled.div`
-    width: ${props => `${(props.gridNumber || 5)*100}px` || `5oopx`};
-    height: ${props => `${(props.gridNumber || 5)*100}px` || `5oopx`};
+    width: ${props => `${(props.gridNumber || 5)*110}px` || `500px`};
+    height: ${props => `${(props.gridNumber || 5)*100}px` || `500px`};
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;

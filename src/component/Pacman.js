@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-component';
+import styled from 'styled-components';
 
 const mapDirection = {
     0:'left',
@@ -22,7 +22,7 @@ const PacmanWrapper = styled.div`
     border-top: ${props=>mapDirection[props.directionValue] === 'top' ? '10px solid red' : '0'};
     border-right: ${props=>mapDirection[props.directionValue] === 'right' ? '10px solid red' : '0'};
     border-bottom: ${props=>mapDirection[props.directionValue] === 'bottom' ? '10px solid red' : '0'};
-    top: ${props => (props.gridNumber -1 - props.yPosition || 0) * 100 + offSet}px;
+    top: ${props => (props.gridNumber - 1 - props.yPosition || 0) * 100 + offSet}px;
     left:${props => (props.xPosition || 0) * 100 + offSet}px;
 `
 

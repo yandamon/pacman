@@ -1,0 +1,20 @@
+PLACE 0,O,NORTH
+MOVE
+MOVE
+LEFT
+MOVE (Error messgae: reach the edge)
+REPORT (Output is 0,2,WEST)
+PLACE 5,1,EAST (Error messgae: invalid place)
+REPORT (Output is 0,2,WEST)
+
+PLACE 2,2,EAST
+MOVE
+RIGHT
+RIGHT
+MOVE
+MOVE
+LEFT
+MOVE
+TOP(Error messgae: invalid command)
+MOVE
+REPORT (Output is 1,0,SOUTH)

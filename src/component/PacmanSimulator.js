@@ -1,19 +1,53 @@
 import React from 'react';
 import Pacman from './Pacman';
-import Map from './Map'
+import Map from './Map';
+
+
+const mapDirections = {
+	NORTH: 'top',
+	EAST: 'right',
+	WEST: 'left',
+	SOUTH: 'bottom',
+};
+
+const getDirectionByNumber = (number) => {
+	switch (number) {
+		case 1:
+			return 'NORTH';
+		case 2:
+			return 'EAST';
+		case 3:
+			return 'SOUTH';
+		case 4:
+			return 'WEST';
+		default:
+			return '';
+	}
+};
+
+const getNumberByDirection = (direction) => {
+	switch (direction) {
+		case 'NORTH':
+			return 1;
+		case 'EAST':
+			return 2;
+		case 'SOUTH':
+			return 3;
+		case 'WEST':
+			return 4;
+		default:
+			return 0;
+	}
+}
 
 class PacmanSimulator extends React.Component{
   constructor(props){
     super(props);
     this.state={
-      xPosition:'',
-      yPosition:'',
-      inputValue:'',
-      errorMessage:'',
       gridNumber:5,
+      currentPosition:{x:0, y:0},
       direction:'',
-      directionValue:'',
-      movement:[[-1,0],[0,1],[1,0],[0,-1]],
+      inputValue:'',
       result:false
     }
   }
@@ -23,159 +57,137 @@ class PacmanSimulator extends React.Component{
     this.setState({inputValue})
   }
 
-  //When submit the command Left and Right, change the direction 
-  setDirection=(value)=>{
-    if(value%4===0){
-      this.setState({
-        direction:'WEST',
-        directionValue:0,
-      })
-    }
-    if(value%4 === 1 || value%4 === -3){
-      this.setState({
-        direction:'NORTH',
-        directionValue:1
-      })
-    }
-    if(value%4 === 2 || value%4 === -2){
-      this.setState({
-        direction:'EAST',
-        directionValue:2
-      })
-    }
-    if(value%4 === 3 || value%4 === -1){
-      this.setState({
-        direction:'SOUTH',
-        directionValue:3
-      })
-    }  
+  rotateDirection = (direction, number) => {
+		const directionNumber = getNumberByDirection(direction)
+		const newDirectionNumber = Math.abs(directionNumber + number) % 5 || (number > 0 ? 1 : 4);
+		const newDirection = getDirectionByNumber(newDirectionNumber);
+		this.setState({
+			direction: newDirection
+		})
+  };
+  
+  left = () => {
+		this.rotateDirection(this.state.direction, -1)
+  };
+  
+
+  right = () => {
+		this.rotateDirection(this.state.direction, +1)
+  };
+  
+
+  place = (x, y ,f) => {
+		this.setState({
+			currentPosition: {x, y},
+			direction: f,
+    })
   }
-
-  setDirectionValue = (direction) =>{
-    switch(direction){
-      case 'WEST': 
-        this.setState({
-          direction,
-          directionValue:0
-        });
-        break;
-      case 'NORTH':
-        this.setState({
-          direction,
-          directionValue:1
-        })
-        break;
-      case 'EAST':
-        this.setState({
-          direction,
-          directionValue:2
-        })
-        break;
-      case 'SOUTH':
-        this.setState({
-          direction,
-          directionValue:3
-        })
-        break;
-      default:
-        this.setState({
-          errorMessage:"invalid direction, direction can only be 'WEST', 'NORTH','EAST','SOUTH' only, please use PLACE command to set direction again",
-          directionValue:''
-        })
-
+  
+  move = () => {
+		const towards = mapDirections[this.state.direction];
+		let xTowards = 0;
+		let yTowards = 0;
+		switch (towards) {
+			case 'top':
+				yTowards = 1;
+				break;
+			case 'left':
+				xTowards = -1;
+				break;
+			case 'right':
+				xTowards = 1;
+				break;
+			case 'bottom':
+				yTowards = -1;
+				break;
+			default:
+				break;
     }
-    
-  }
+    const xPosition = parseInt(this.state.currentPosition.x) + xTowards;
+    const yPosition = parseInt(this.state.currentPosition.y) + yTowards;
+    if(xPosition>=0 && xPosition < this.state.gridNumber && yPosition>=0 && yPosition< this.state.gridNumber){
+      this.setState({
+        currentPosition:{x:xPosition,y:yPosition}
+      })
+    }
+    else{
+      this.setState({
+        errorMessage:'Already reach the edge, please try another command'
+      })
+    }
+  };
+  
+  report = () => {
+		this.setState({
+      result:true
+    })
+	}
 
-  //When submit the form, call this function.
-  onSubmit = (e) =>{
+
+  onSubmit =(e) => {
     e.preventDefault();
     this.setState({
+      inputValue:'',
       errorMessage:'',
-      result:false,
-      inputValue:''
+      result:false
     })
     const value = this.state.inputValue.split(" ");
     if(value[0]==='PLACE' && value.length === 2){
       const xPosition = value[1].split(",")[0];
       const yPosition = value[1].split(",")[1];
       const direction = value[1].split(",")[2];
-      if( xPosition >= 0 && xPosition <= 4 && yPosition >= 0 && yPosition <= 4 && xPosition%1 ===0 &&yPosition%1 ===0){
-        this.setDirectionValue(direction)
-        this.setState({
-          xPosition,
-          yPosition,
-
-      })}else
+      const number = getNumberByDirection(direction);
+      if(xPosition.match(/[1-4]\d*$/) && yPosition.match(/[1-4]\d*$/) && number !== 0){
+        this.place(xPosition,yPosition,direction)
+        }else
       {
         this.setState({
           errorMessage: 'Invalid place, it must be a NUMBER between 0 and 4'
         })
       }
     }
-    else if((!this.state.directionValue && this.state.directionValue !==0) || !this.state.direction){
+    else if(!this.state.direction){
       this.setState({
         errorMessage:'You must use PLACE command to place you pacman first'
       })
     }
     else if(value[0]==='LEFT'){
-      const directionValue=this.state.directionValue - 1;
-      this.setDirection(directionValue);
-      this.setState({
-      })
+      this.left();
     }
     else if(value[0]==='RIGHT'){
-      const directionValue=this.state.directionValue + 1;
-      this.setDirection(directionValue);
-      this.setState({
-      })
+      this.right();
     }
     else if(value[0]==='MOVE'){
-      const value = this.state.directionValue;
-      const xPosition=parseInt(this.state.xPosition) + this.state.movement[value][0];
-      const yPosition=parseInt(this.state.yPosition) + this.state.movement[value][1];
-      if(xPosition >= 0 && xPosition <= 4 && yPosition >= 0 && yPosition <= 4){
-        this.setState({
-          xPosition,
-          yPosition,
-          errorMessage:''
-        })
-      }
-      else{
-        this.setState({
-          errorMessage:'Already reach the edge, please try another command'
-        })
-      }
+      this.move()
     }
     else if(value[0]==='REPORT'){
-      this.setState({
-        result:true
-      })
-    }else{
+      this.report();
+    }
+    else{
       this.setState({
         errorMessage:'invalid command, the system accept PLACE, LEFT, RIGHT, MOVE and REPORT only'
       })
     }
   }
 
+
   render(){
     return (<React.Fragment>
-      <h1>pacman</h1>
+      <h1 style={{textAlign:'center'}}>PACMAN</h1>
+      <Map>
+      <Pacman directionValue={this.state.direction} 
+              gridNumber={this.state.gridNumber}
+              xPosition={this.state.currentPosition.x}
+              yPosition={this.state.currentPosition.y}/>
+      </Map>
       <p>The input accept five type of commands: PLACE(in format: PLACE X,Y,Z. eg: PLACE 1,1,WEST), LEFT, RIGHT, MOVE and REPORT</p>
       <form onSubmit={this.onSubmit}>
         <input type='text' placeholder='Please enter your command' 
                 onChange={this.handleChange} 
                 value={this.state.inputValue}></input>
       </form>
-      {this.state.errorMessage && <p>{this.state.errorMessage}</p>}
-      <p>{this.state.xPosition}.{this.state.yPosition}</p>
-      {this.state.result && <p>Output: {this.state.xPosition},{this.state.yPosition},{this.state.direction}</p>}
-      <Map>
-      <Pacman directionValue={this.state.directionValue} 
-              gridNumber={this.state.gridNumber}
-              xPosition={this.state.xPosition}
-              yPosition={this.state.yPosition}/>
-      </Map>
+      {this.state.errorMessage && <p style={{color:'red',fontStyle:'italic'}}>{this.state.errorMessage}</p>}
+      {this.state.result && <p>Output is: {this.state.currentPosition.x}, {this.state.currentPosition.y}, {this.state.direction}</p>}
     </React.Fragment>)
   }
 }
